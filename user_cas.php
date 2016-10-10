@@ -70,7 +70,6 @@ class OC_USER_CAS extends OC_User_Backend {
 			$casDebugFile=OCP\Config::getAppValue('user_cas', 'cas_debug_file', '');
 			$casCertPath = OCP\Config::getAppValue('user_cas', 'cas_cert_path', '');
 			$php_cas_path=OCP\Config::getAppValue('user_cas', 'cas_php_cas_path', 'CAS.php');
-			$cas_service_url = OCP\Config::getAppValue('user_cas', 'cas_service_url', '');
 
 			if (!class_exists('phpCAS')) {
 				if (empty($php_cas_path)) $php_cas_path='CAS.php';
@@ -88,9 +87,9 @@ class OC_USER_CAS extends OC_User_Backend {
 			
 			phpCAS::client($casVersion,$casHostname,(int)$casPort,$casPath,false);
 			
-			if (!empty($cas_service_url)) {
-				phpCAS::setFixedServiceURL($cas_service_url);
-			}
+			$cas_service_url = self :: getServiceURL();
+			\OCP\Util::writeLog('cas',"Set service URL to : '$cas_service_url'", \OCP\Util::DEBUG);
+			phpCAS::setFixedServiceURL($cas_service_url);
 						
 			if(!empty($casCertPath)) {
 				phpCAS::setCasServerCACert($casCertPath);
@@ -98,9 +97,40 @@ class OC_USER_CAS extends OC_User_Backend {
 			else {
 				phpCAS::setNoCasServerValidation();
 			}
+			\OCP\Util::writeLog('cas','Successfully initialized', \OCP\Util::DEBUG);
 			self :: $_initialized_php_cas = true;
 		}
 		return self :: $_initialized_php_cas;
+	}
+
+	public static function getServiceURL() {
+		$service_url = OCP\Config::getAppValue('user_cas', 'cas_service_url', '');
+		$url_params=array('app' => 'user_cas');
+		if (!isset($_GET['requesttoken'])) {
+			$url_params['requesttoken'] = urlencode(\OC::$server->getCsrfTokenManager()->getToken()->getEncryptedValue());
+		}
+		else {
+			$url_params['requesttoken'] = urlencode($_GET['requesttoken']);
+		}
+
+		if (empty($cas_service_url)) {
+			$urlGenerator = \OC::$server->getURLGenerator();
+			$service_url=$urlGenerator->getAbsoluteURL('/index.php/login');
+		}
+
+		if (strpos($cas_service_url,'?')) {
+			$service_url.='&';
+		}
+		else {
+			$service_url.='?';
+		}
+		$_url_params=array();
+		foreach($url_params as $key => $val) {
+			$_url_params[] = $key.'='.$val;
+		}
+		$service_url.=implode('&',$_url_params);
+
+		return $service_url;
 	}
 
 	private function initializeLdapBackendAdapter() {

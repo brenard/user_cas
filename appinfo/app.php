@@ -63,7 +63,7 @@ if (OCP\App::isEnabled('user_cas')) {
 	}
 
 	if (!phpCAS::isAuthenticated() && !OCP\User::isLoggedIn()) {
-		OC_App::registerLogIn(array('href' => '?app=user_cas', 'name' => 'CAS Login'));
+		OC_App::registerLogIn(array('href' => OC_USER_CAS :: getServiceURL(), 'name' => 'CAS Login'));
 	}
 
 }

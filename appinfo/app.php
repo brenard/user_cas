@@ -48,12 +48,14 @@ if (OCP\App::isEnabled('user_cas')) {
 			phpCAS::forceAuthentication();
 
 			$user = phpCAS::getUser();
+
 			$application = new \OC\Core\Application();
 			$loginController = $application->getContainer()->query('LoginController');
 			$loginController->tryLogin($user,NULL,NULL);
 
-			if (isset($_SERVER["QUERY_STRING"]) && !empty($_SERVER["QUERY_STRING"]) && $_SERVER["QUERY_STRING"] != 'app=user_cas') {
-				header( 'Location: ' . OC::$WEBROOT . '/?' . $_SERVER["QUERY_STRING"]);
+			if (isset($_GET['redirect_url'])) {
+				$urlGenerator = \OC::$server->getURLGenerator();
+				header( 'Location: ' . $urlGenerator->getAbsoluteURL(urldecode($_GET['redirect_url'])) );
 				exit();
 			}
 		}

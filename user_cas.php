@@ -113,6 +113,10 @@ class OC_USER_CAS extends OC_User_Backend {
 			$url_params['requesttoken'] = urlencode($_GET['requesttoken']);
 		}
 
+		if (isset($_GET['redirect_url'])) {
+			$url_params['redirect_url'] = urlencode($_GET['redirect_url']);
+		}
+
 		if (empty($cas_service_url)) {
 			$urlGenerator = \OC::$server->getURLGenerator();
 			$service_url=$urlGenerator->getAbsoluteURL('/index.php/login');

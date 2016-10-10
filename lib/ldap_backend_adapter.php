@@ -64,7 +64,7 @@ class LdapBackendAdapter extends \OCA\User_LDAP\User_LDAP {
 			);
 			$this->connection = new \OCA\User_LDAP\Connection($this->ldap,$configPrefixes[0]);
 
-			$this->access = new \OCA\User_LDAP\Access($this->connection, $this->ldap, $this->usermanager);
+			$this->access = new \OCA\User_LDAP\Access($this->connection, $this->ldap, $this->usermanager, $helper);
 
 			$this->access->setUserMapper(new \OCA\User_LDAP\Mapping\UserMapping($dbc));
 			$this->access->setGroupMapper(new \OCA\User_LDAP\Mapping\GroupMapping($dbc));

@@ -177,8 +177,8 @@ class OC_USER_CAS extends OC_User_Backend {
 
 	
 	public function getDisplayName($uid) {
-		$udb = new OC_User_Database;
-		return $udb->getDisplayName($uid);
+		$userDatabase = new OC\User\Database;
+		return $userDatabase->getDisplayName($uid);
 	}
 
 	/**
@@ -186,8 +186,8 @@ class OC_USER_CAS extends OC_User_Backend {
 	*
 	*/
 	public function setDisplayName($uid,$displayName) {
-		$udb = new OC_User_Database;
-		$udb->setDisplayName($uid,$displayName);
+		$userDatabase = new OC\User\Database;
+		$userDatabase->setDisplayName($uid,$displayName);
 	}
 
 }
